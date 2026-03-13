@@ -2,11 +2,33 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/mcp.ts",
+      "src": "api/**/*.ts",
       "use": "@vercel/node"
     }
   ],
   "routes": [
+    {
+      "src": "/.well-known/oauth-protected-resource",
+      "dest": "/api/well-known/oauth-protected-resource"
+    },
+    {
+      "src": "/.well-known/oauth-authorization-server",
+      "dest": "/api/well-known/oauth-authorization-server"
+    },
+    {
+      "src": "/oauth/register",
+      "methods": ["POST", "OPTIONS"],
+      "dest": "/api/oauth/register"
+    },
+    {
+      "src": "/oauth/authorize",
+      "dest": "/api/oauth/authorize"
+    },
+    {
+      "src": "/oauth/token",
+      "methods": ["POST", "OPTIONS"],
+      "dest": "/api/oauth/token"
+    },
     {
       "src": "/mcp",
       "methods": ["GET", "POST", "DELETE", "OPTIONS"],
@@ -18,3 +40,4 @@
     }
   ]
 }
+
