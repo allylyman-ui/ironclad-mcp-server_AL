@@ -9,6 +9,11 @@
   "routes": [
     {
       "src": "/mcp",
+      "methods": ["GET", "POST", "DELETE", "OPTIONS"],
+      "dest": "/api/mcp"
+    },
+    {
+      "src": "/health",
       "dest": "/api/mcp"
     }
   ]
