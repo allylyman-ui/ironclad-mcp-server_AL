@@ -25,7 +25,45 @@ function createServer(): McpServer {
   return server;
 }
 
+function setCorsHeaders(res: VercelResponse) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, Authorization, Mcp-Session-Id");
+  res.setHeader("Access-Control-Expose-Headers", "Mcp-Session-Id");
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  setCorsHeaders(res);
+
+  // Handle CORS preflight
+  if (req.method === "OPTIONS") {
+    return res.status(204).end();
+  }
+
+  // GET requests - return 405 for stateless mode but with proper JSON-RPC format
+  if (req.method === "GET") {
+    return res.status(405).json({
+      jsonrpc: "2.0",
+      error: {
+        code: -32000,
+        message: "Method not allowed. This server operates in stateless mode - use POST.",
+      },
+      id: null,
+    });
+  }
+
+  // DELETE requests - return 405 for stateless mode
+  if (req.method === "DELETE") {
+    return res.status(405).json({
+      jsonrpc: "2.0",
+      error: {
+        code: -32000,
+        message: "Method not allowed. This server operates in stateless mode.",
+      },
+      id: null,
+    });
+  }
+
   if (req.method !== "POST") {
     return res.status(405).json({
       jsonrpc: "2.0",
